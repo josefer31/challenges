@@ -10,6 +10,11 @@ type InMemoryAdRepository struct {
 	AdRepository
 }
 
+var ads = make([]Ad, 0)
+
+func (receiver InMemoryAdRepository) FindAll() []Ad {
+	return ads
+}
 func (receiver InMemoryAdRepository) FindById(id uuid.UUID) (Ad, error) {
 	for _, ad := range ads {
 		if ad.GetId() == id {
@@ -18,8 +23,6 @@ func (receiver InMemoryAdRepository) FindById(id uuid.UUID) (Ad, error) {
 	}
 	return Ad{}, errors.New("ad not found")
 }
-
-var ads = make([]Ad, 0)
 
 func (receiver InMemoryAdRepository) Save(ad Ad) Ad {
 	ads = append(ads, ad)
