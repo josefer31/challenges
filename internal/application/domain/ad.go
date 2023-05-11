@@ -21,6 +21,14 @@ func (ad *Ad) GetId() uuid.UUID {
 	return ad.id
 }
 
+func (ad *Ad) GetTitle() string {
+	return ad.title
+}
+
+func (ad *Ad) GetDescription() string {
+	return ad.description
+}
+
 func CreateAd(title string, description string, price uint) Ad {
 	return Ad{
 		uuid.New(), title, description, price, time.Now(),
