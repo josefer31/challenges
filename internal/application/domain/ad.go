@@ -7,9 +7,9 @@ import (
 
 type Ad struct {
 	id          uuid.UUID
-	title       string
-	description string
-	price       uint
+	Title       string
+	Description string
+	Price       uint
 	createdAt   time.Time
 }
 
@@ -21,15 +21,7 @@ func (ad *Ad) GetId() uuid.UUID {
 	return ad.id
 }
 
-func (ad *Ad) GetTitle() string {
-	return ad.title
-}
-
-func (ad *Ad) GetDescription() string {
-	return ad.description
-}
-
-func CreateAd(title string, description string, price uint) Ad {
+func NewAd(title string, description string, price uint) Ad {
 	return Ad{
 		uuid.New(), title, description, price, time.Now(),
 	}

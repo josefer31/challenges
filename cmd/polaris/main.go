@@ -8,10 +8,8 @@ import (
 )
 
 var (
-	adRepository    = ProvideInMemoryRepository()
-	createAdService = ProvideCreateAdService(adRepository)
-	findAdService   = ProvideFindAdService(adRepository)
-	findAdsService  = ProvideFindAdsService(adRepository)
+	adRepository = ProvideInMemoryRepository()
+	adService    = ProvideAdService(adRepository)
 )
 
 func main() {
@@ -19,11 +17,11 @@ func main() {
 	fmt.Println("Go to save new ad")
 	fmt.Println("--------------------------------")
 
-	createdAd := createAnAd("titulo1", "descripcion 1", 12)
+	createdAd := createAd("titulo1", "descripcion 1", 12)
 	fmt.Printf("Your new Ad %v was created at %v\n", createdAd.Id, createdAd.CreatedAt)
 	fmt.Println("--------------------------------")
 
-	foundAd, adNotFoundError := findAdService.Execute(FindAdRequest{Id: createdAd.Id})
+	foundAd, adNotFoundError := adService.FindAd(FindAdRequest{Id: createdAd.Id})
 	if adNotFoundError != nil {
 		fmt.Printf("Error, Ad %v not found\n", createdAd.Id)
 	} else {
@@ -31,48 +29,36 @@ func main() {
 	}
 	fmt.Println("--------------------------------")
 
-	createAnAd("titulo2", "descripcion 2", 12)
-	createAnAd("titulo3", "descripcion 3", 12)
-	createAnAd("titulo4", "descripcion 4", 12)
-	createAnAd("titulo5", "descripcion 5", 12)
-	createAnAd("titulo6", "descripcion 6", 12)
-	createAnAd("titulo7", "descripcion 7", 12)
-	foundAdResponse := findAdsService.Execute()
+	createAd("titulo2", "descripcion 2", 12)
+	createAd("titulo3", "descripcion 3", 12)
+	createAd("titulo4", "descripcion 4", 12)
+	createAd("titulo5", "descripcion 5", 12)
+	createAd("titulo6", "descripcion 6", 12)
+	createAd("titulo7", "descripcion 7", 12)
+	foundAdResponse := adService.FindAll()
 
 	fmt.Println("--------------------------------")
-	fmt.Printf("Found Ads  %v\n", foundAdResponse.Ads)
+	fmt.Printf("Found Ads  %v\n", foundAdResponse)
 
 }
 
-func createAnAd(
+func createAd(
 	title string,
 	description string,
 	price uint,
-) CreateAdResponse {
+) AdResponse {
 	request := CreateAdRequest{
 		Title:       title,
 		Description: description,
 		Price:       price,
 	}
 
-	createdAd := createAdService.Execute(request)
+	createdAd := adService.Create(request)
 	return createdAd
 }
 
-func ProvideCreateAdService(adRepository AdRepository) CreateAdService {
-	return CreateAdService{
-		AdRepository: adRepository,
-	}
-}
-
-func ProvideFindAdService(adRepository AdRepository) FindAdService {
-	return FindAdService{
-		AdRepository: adRepository,
-	}
-}
-
-func ProvideFindAdsService(adRepository AdRepository) FindAdsService {
-	return FindAdsService{
+func ProvideAdService(adRepository AdRepository) AdService {
+	return AdService{
 		AdRepository: adRepository,
 	}
 }
