@@ -10,16 +10,21 @@ import (
 	"time"
 )
 
-func TestReturnEmptyAds(t *testing.T) {
-	adRepository := InMemoryAds{}
+var (
+	adRepository = InMemoryAds{}
+)
 
+func tearDown() { adRepository.DeleteAll() }
+
+func TestReturnEmptyAds(t *testing.T) {
+	defer tearDown()
 	actual := adRepository.FindAll()
 
 	assert.Empty(t, actual)
 }
 
 func TestReturnAllAds(t *testing.T) {
-	adRepository := InMemoryAds{}
+	defer tearDown()
 	expectedAds := createOneHundredRandomAds()
 	fillRepository(adRepository, expectedAds)
 
@@ -29,7 +34,7 @@ func TestReturnAllAds(t *testing.T) {
 }
 
 func TestReturnSomeAd(t *testing.T) {
-	adRepository := InMemoryAds{}
+	defer tearDown()
 	listOfAds := createOneHundredRandomAds()
 	fillRepository(adRepository, listOfAds)
 	expectedAd := listOfAds[0]
@@ -40,15 +45,14 @@ func TestReturnSomeAd(t *testing.T) {
 }
 
 func TestFindNonExistAdReturnError(t *testing.T) {
-	adRepository := InMemoryAds{}
-
+	defer tearDown()
 	_, adNotFound := adRepository.FindById(uuid.New())
 
 	assert.Error(t, adNotFound)
 }
 
 func TestSaveNewAd(t *testing.T) {
-	adRepository := InMemoryAds{}
+	defer tearDown()
 	expectedAd := givenSomeAd()
 
 	adRepository.Save(expectedAd)
@@ -67,7 +71,7 @@ func createOneHundredRandomAds() []domain.Ad {
 	createdAds := make([]domain.Ad, 100)
 	for index := 0; index < 100; index++ {
 		ad := givenSomeAd()
-		createdAds = append(createdAds, ad)
+		createdAds[0] = ad
 	}
 	return createdAds
 }

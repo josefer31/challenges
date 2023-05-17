@@ -8,6 +8,10 @@ import (
 
 type InMemoryAds struct{}
 
+func (receiver InMemoryAds) DeleteAll() {
+	ads = make([]Ad, 0)
+}
+
 var ads = make([]Ad, 0)
 
 func (receiver InMemoryAds) FindAll() []Ad {
