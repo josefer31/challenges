@@ -10,7 +10,7 @@ import (
 )
 
 func TestCreateAd(t *testing.T) {
-	adRepository := new(mocks.AdRepository)
+	adRepository := new(mocks.Ads)
 	clock := new(mocks.Clock)
 	idGenerator := new(mocks.IdGenerator)
 	service := CreateAdService{adRepository, idGenerator, clock}
@@ -33,7 +33,7 @@ func givenExpectedResponse(ad Ad) CreateAdResponse {
 	}
 }
 
-func stubMocks(adRepository *mocks.AdRepository, ad Ad, clock *mocks.Clock, idGenerator *mocks.IdGenerator) {
+func stubMocks(adRepository *mocks.Ads, ad Ad, clock *mocks.Clock, idGenerator *mocks.IdGenerator) {
 	adRepository.EXPECT().Save(ad).Return(ad).Times(1)
 	clock.EXPECT().Now().Return(ad.GetCreatedAt()).Times(1)
 	idGenerator.EXPECT().Next().Return(ad.GetId()).Times(1)
