@@ -10,9 +10,9 @@ import (
 )
 
 func TestCreateAd(t *testing.T) {
-	adRepository := mocks.NewAdRepository(t)
-	clock := mocks.NewClock(t)
-	idGenerator := mocks.NewIdGenerator(t)
+	adRepository := new(mocks.AdRepository)
+	clock := new(mocks.Clock)
+	idGenerator := new(mocks.IdGenerator)
 	service := CreateAdService{adRepository, idGenerator, clock}
 	ad := givenAd()
 	stubMocks(adRepository, ad, clock, idGenerator)
