@@ -15,13 +15,13 @@ var ads = make([]Ad, 0)
 func (receiver InMemoryAdRepository) FindAll() []Ad {
 	return ads
 }
-func (receiver InMemoryAdRepository) FindById(id uuid.UUID) (Ad, error) {
+func (receiver InMemoryAdRepository) FindById(id uuid.UUID) (*Ad, error) {
 	for _, ad := range ads {
 		if ad.GetId() == id {
-			return ad, nil
+			return &ad, nil
 		}
 	}
-	return Ad{}, errors.New("ad not found")
+	return nil, errors.New("ad not found")
 }
 
 func (receiver InMemoryAdRepository) Save(ad Ad) Ad {
