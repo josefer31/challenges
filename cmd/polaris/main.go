@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	adRepository    = ProvideInMemoryRepository()
+	ads             = ProvideInMemoryAds()
 	idGenerator     = ProvideIdGenerator()
 	clock           = ProvideClock()
 	createAdService = ProvideCreateAdService()
@@ -63,7 +63,7 @@ func createAd(
 
 func ProvideCreateAdService() CreateAdService {
 	return CreateAdService{
-		AdRepository: adRepository,
+		AdRepository: ads,
 		IdGenerator:  idGenerator,
 		Clock:        clock,
 	}
@@ -71,18 +71,18 @@ func ProvideCreateAdService() CreateAdService {
 
 func ProvideFindAdService() FindAdService {
 	return FindAdService{
-		AdRepository: adRepository,
+		AdRepository: ads,
 	}
 }
 
 func ProvideFindAdsService() FindAdsService {
 	return FindAdsService{
-		AdRepository: adRepository,
+		AdRepository: ads,
 	}
 }
 
-func ProvideInMemoryRepository() AdRepository {
-	return &InMemoryAdRepository{}
+func ProvideInMemoryAds() Ads {
+	return &InMemoryAds{}
 }
 
 func ProvideIdGenerator() IdGenerator {

@@ -11,7 +11,7 @@ import (
 )
 
 func TestReturnEmptyAds(t *testing.T) {
-	adRepository := InMemoryAdRepository{}
+	adRepository := InMemoryAds{}
 
 	actual := adRepository.FindAll()
 
@@ -19,7 +19,7 @@ func TestReturnEmptyAds(t *testing.T) {
 }
 
 func TestReturnAllAds(t *testing.T) {
-	adRepository := InMemoryAdRepository{}
+	adRepository := InMemoryAds{}
 	expectedAds := createOneHundredRandomAds()
 	fillRepository(adRepository, expectedAds)
 
@@ -29,7 +29,7 @@ func TestReturnAllAds(t *testing.T) {
 }
 
 func TestReturnSomeAd(t *testing.T) {
-	adRepository := InMemoryAdRepository{}
+	adRepository := InMemoryAds{}
 	listOfAds := createOneHundredRandomAds()
 	fillRepository(adRepository, listOfAds)
 	expectedAd := listOfAds[0]
@@ -40,7 +40,7 @@ func TestReturnSomeAd(t *testing.T) {
 }
 
 func TestFindNonExistAdReturnError(t *testing.T) {
-	adRepository := InMemoryAdRepository{}
+	adRepository := InMemoryAds{}
 
 	_, adNotFound := adRepository.FindById(uuid.New())
 
@@ -48,7 +48,7 @@ func TestFindNonExistAdReturnError(t *testing.T) {
 }
 
 func TestSaveNewAd(t *testing.T) {
-	adRepository := InMemoryAdRepository{}
+	adRepository := InMemoryAds{}
 	expectedAd := givenSomeAd()
 
 	adRepository.Save(expectedAd)
@@ -57,7 +57,7 @@ func TestSaveNewAd(t *testing.T) {
 	assert.Equal(t, &expectedAd, actualAd)
 }
 
-func fillRepository(adRepository InMemoryAdRepository, adsToSave []domain.Ad) {
+func fillRepository(adRepository InMemoryAds, adsToSave []domain.Ad) {
 	for _, ad := range adsToSave {
 		adRepository.Save(ad)
 	}

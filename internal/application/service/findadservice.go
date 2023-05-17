@@ -17,7 +17,7 @@ type FindAdResponse struct {
 }
 
 type FindAdService struct {
-	AdRepository AdRepository
+	AdRepository Ads
 }
 
 func (service FindAdService) Execute(request FindAdRequest) (FindAdResponse, error) {

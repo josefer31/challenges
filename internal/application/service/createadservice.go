@@ -16,7 +16,7 @@ type CreateAdResponse struct {
 }
 
 type CreateAdService struct {
-	AdRepository AdRepository
+	AdRepository Ads
 	IdGenerator  IdGenerator
 	Clock        Clock
 }
