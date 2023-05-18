@@ -1,12 +1,11 @@
 package service
 
 import (
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	. "polaris/internal/application/domain"
 	"polaris/internal/application/mocks"
+	"polaris/internal/test/fixtures"
 	"testing"
-	"time"
 )
 
 func TestCreateAd(t *testing.T) {
@@ -14,10 +13,10 @@ func TestCreateAd(t *testing.T) {
 	clock := new(mocks.Clock)
 	idGenerator := new(mocks.IdGenerator)
 	service := CreateAdService{adRepository, idGenerator, clock}
-	ad := givenAd()
-	stubMocks(adRepository, ad, clock, idGenerator)
-	request := givenAdToCreate()
-	expected := givenExpectedResponse(ad)
+	randomAd := fixtures.RandomAd()
+	stubMocks(adRepository, randomAd, clock, idGenerator)
+	request := adToCreateAdRequest(randomAd)
+	expected := givenExpectedResponse(randomAd)
 
 	actual := service.Execute(request)
 
@@ -39,22 +38,10 @@ func stubMocks(adRepository *mocks.Ads, ad Ad, clock *mocks.Clock, idGenerator *
 	idGenerator.EXPECT().Next().Return(ad.GetId()).Times(1)
 }
 
-func givenAdToCreate() CreateAdRequest {
+func adToCreateAdRequest(ad Ad) CreateAdRequest {
 	return CreateAdRequest{
-		Title:       "Laptop",
-		Description: "New apple laptop",
-		Price:       12,
+		Title:       ad.Title,
+		Description: ad.Description,
+		Price:       ad.Price,
 	}
-}
-
-func givenAd() Ad {
-	id := uuid.New()
-	now := time.Now()
-	return NewAd(
-		id,
-		"Laptop",
-		"New apple laptop",
-		12,
-		now,
-	)
 }

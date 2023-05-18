@@ -11,3 +11,5 @@ type ClockImpl struct{}
 func (receiver ClockImpl) Now() time.Time {
 	return time.Now()
 }
+
+func NewClock() Clock { return ClockImpl{} }

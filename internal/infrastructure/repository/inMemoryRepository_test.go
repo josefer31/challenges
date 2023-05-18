@@ -2,12 +2,10 @@ package repository
 
 import (
 	"github.com/google/uuid"
-	"github.com/icrowley/fake"
 	"github.com/stretchr/testify/assert"
-	"math/rand"
 	"polaris/internal/application/domain"
+	"polaris/internal/test/fixtures"
 	"testing"
-	"time"
 )
 
 var (
@@ -16,8 +14,7 @@ var (
 
 func tearDown() { adRepository.DeleteAll() }
 
-func TestReturnEmptyAds(t *testing.T) {
-	defer tearDown()
+func TestReturnEmptyAdsForEmptyRepository(t *testing.T) {
 	actual := adRepository.FindAll()
 
 	assert.Empty(t, actual)
@@ -39,26 +36,26 @@ func TestReturnSomeAd(t *testing.T) {
 	fillRepository(adRepository, listOfAds)
 	expectedAd := listOfAds[0]
 
-	actualAd, _ := adRepository.FindById(expectedAd.GetId())
+	actualAd := adRepository.FindById(expectedAd.GetId())
 
-	assert.Equal(t, &expectedAd, actualAd)
+	assert.Equal(t, expectedAd, *actualAd)
 }
 
-func TestFindNonExistAdReturnError(t *testing.T) {
+func TestFindNonExistAdReturnNil(t *testing.T) {
 	defer tearDown()
-	_, adNotFound := adRepository.FindById(uuid.New())
+	adNotFound := adRepository.FindById(uuid.New())
 
-	assert.Error(t, adNotFound)
+	assert.Nil(t, adNotFound)
 }
 
 func TestSaveNewAd(t *testing.T) {
 	defer tearDown()
-	expectedAd := givenSomeAd()
+	expectedAd := fixtures.RandomAd()
 
 	adRepository.Save(expectedAd)
-	actualAd, _ := adRepository.FindById(expectedAd.GetId())
+	actualAd := adRepository.FindById(expectedAd.GetId())
 
-	assert.Equal(t, &expectedAd, actualAd)
+	assert.Equal(t, expectedAd, *actualAd)
 }
 
 func fillRepository(adRepository InMemoryAds, adsToSave []domain.Ad) {
@@ -70,18 +67,8 @@ func fillRepository(adRepository InMemoryAds, adsToSave []domain.Ad) {
 func createOneHundredRandomAds() []domain.Ad {
 	createdAds := make([]domain.Ad, 100)
 	for index := 0; index < 100; index++ {
-		ad := givenSomeAd()
+		ad := fixtures.RandomAd()
 		createdAds[0] = ad
 	}
 	return createdAds
-}
-
-func givenSomeAd() domain.Ad {
-	return domain.NewAd(
-		uuid.New(),
-		fake.Title(),
-		fake.Characters(),
-		uint(rand.Uint32()),
-		time.Now(),
-	)
 }
