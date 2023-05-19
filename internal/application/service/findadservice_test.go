@@ -29,10 +29,11 @@ func TestFindNonExistingAdReturnNil(t *testing.T) {
 	findAdService := NewFindAdService(ads)
 	ads.EXPECT().FindById(mock.Anything).Return(nil)
 
-	actualResponse := findAdService.Execute(FindAdRequest{uuid.New().String()})
+	randomId := uuid.New()
+	actualResponse := findAdService.Execute(FindAdRequest{randomId.String()})
 
 	assert.Nil(t, actualResponse)
-
+	ads.AssertCalled(t, "FindById", randomId)
 }
 
 func TestFindUsingInvalidUuidReturnNil(t *testing.T) {
@@ -44,7 +45,7 @@ func TestFindUsingInvalidUuidReturnNil(t *testing.T) {
 	actualResponse := findAdService.Execute(FindAdRequest{"INVALID UUID"})
 
 	assert.Nil(t, actualResponse)
-
+	ads.AssertNotCalled(t, "FindById", "INVALID UUID")
 }
 
 func givenExpectedAdResponse(ad domain.Ad) FindAdResponse {

@@ -21,6 +21,7 @@ func TestCreateAd(t *testing.T) {
 	actual := service.Execute(request)
 
 	assert.Equal(t, actual, expected)
+	adRepository.AssertCalled(t, "Save", randomAd)
 }
 
 func givenExpectedResponse(ad Ad) CreateAdResponse {
@@ -33,9 +34,9 @@ func givenExpectedResponse(ad Ad) CreateAdResponse {
 }
 
 func stubMocks(adRepository *mocks.Ads, ad Ad, clock *mocks.Clock, idGenerator *mocks.IdGenerator) {
-	adRepository.EXPECT().Save(ad).Return(ad).Times(1)
-	clock.EXPECT().Now().Return(ad.GetCreatedAt()).Times(1)
-	idGenerator.EXPECT().Next().Return(ad.GetId()).Times(1)
+	adRepository.EXPECT().Save(ad).Return(ad)
+	clock.EXPECT().Now().Return(ad.GetCreatedAt())
+	idGenerator.EXPECT().Next().Return(ad.GetId())
 }
 
 func adToCreateAdRequest(ad Ad) CreateAdRequest {
