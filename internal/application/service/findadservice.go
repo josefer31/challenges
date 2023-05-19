@@ -17,21 +17,27 @@ type FindAdResponse struct {
 }
 
 type FindAdService struct {
-	AdRepository Ads
+	adRepository Ads
 }
 
-func (service FindAdService) Execute(request FindAdRequest) (FindAdResponse, error) {
-	id, _ := uuid.Parse(request.Id)
-	savedAd, notFoundError := service.AdRepository.FindById(id)
-
-	if notFoundError != nil {
-		return FindAdResponse{}, notFoundError
+func (service *FindAdService) Execute(request FindAdRequest) *FindAdResponse {
+	id, errorParsing := uuid.Parse(request.Id)
+	if errorParsing != nil {
+		return nil
 	}
-
-	return FindAdResponse{
+	savedAd := service.adRepository.FindById(id)
+	if savedAd == nil {
+		return nil
+	}
+	return &FindAdResponse{
 		Id:          savedAd.GetId().String(),
 		Title:       savedAd.Title,
 		Description: savedAd.Description,
 		CreatedAt:   savedAd.GetCreatedAt().String(),
-	}, nil
+	}
+
+}
+
+func NewFindAdService(ads Ads) FindAdService {
+	return FindAdService{ads}
 }

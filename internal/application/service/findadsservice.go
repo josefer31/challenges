@@ -14,6 +14,10 @@ type FindAdsService struct {
 	AdRepository Ads
 }
 
+func NewFindAdsService(ads Ads) FindAdsService {
+	return FindAdsService{ads}
+}
+
 func (service FindAdsService) Execute() FindAdsResponse {
 
 	foundAds := service.AdRepository.FindAll()

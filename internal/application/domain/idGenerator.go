@@ -8,6 +8,8 @@ type IdGenerator interface {
 
 type UUIDGenerator struct{}
 
-func (receiver *UUIDGenerator) Next() uuid.UUID {
+func (receiver UUIDGenerator) Next() uuid.UUID {
 	return uuid.New()
 }
+
+func NewUUIDGenerator() IdGenerator { return UUIDGenerator{} }

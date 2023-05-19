@@ -25,8 +25,8 @@ func main() {
 	fmt.Printf("Your new Ad %v was created at %v\n", createdAd.Id, createdAd.CreatedAt)
 	fmt.Println("--------------------------------")
 
-	foundAd, adNotFoundError := findAdService.Execute(FindAdRequest{Id: createdAd.Id})
-	if adNotFoundError != nil {
+	foundAd := findAdService.Execute(FindAdRequest{Id: createdAd.Id})
+	if foundAd == nil {
 		fmt.Printf("Error, Ad %v not found\n", createdAd.Id)
 	} else {
 		fmt.Printf("Found Ad  %v\n", foundAd)
@@ -70,25 +70,21 @@ func ProvideCreateAdService() CreateAdService {
 }
 
 func ProvideFindAdService() FindAdService {
-	return FindAdService{
-		AdRepository: ads,
-	}
+	return NewFindAdService(ads)
 }
 
 func ProvideFindAdsService() FindAdsService {
-	return FindAdsService{
-		AdRepository: ads,
-	}
+	return NewFindAdsService(ads)
 }
 
 func ProvideInMemoryAds() Ads {
-	return &InMemoryAds{}
+	return NewInMemoryAds()
 }
 
 func ProvideIdGenerator() IdGenerator {
-	return &UUIDGenerator{}
+	return NewUUIDGenerator()
 }
 
 func ProvideClock() Clock {
-	return &ClockImpl{}
+	return NewClock()
 }

@@ -1,12 +1,11 @@
 package service
 
 import (
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	. "polaris/internal/application/domain"
 	"polaris/internal/application/mocks"
+	"polaris/internal/test/fixtures"
 	"testing"
-	"time"
 )
 
 func TestCreateAd(t *testing.T) {
@@ -14,14 +13,15 @@ func TestCreateAd(t *testing.T) {
 	clock := new(mocks.Clock)
 	idGenerator := new(mocks.IdGenerator)
 	service := CreateAdService{adRepository, idGenerator, clock}
-	ad := givenAd()
-	stubMocks(adRepository, ad, clock, idGenerator)
-	request := givenAdToCreate()
-	expected := givenExpectedResponse(ad)
+	randomAd := fixtures.RandomAd()
+	stubMocks(adRepository, randomAd, clock, idGenerator)
+	request := adToCreateAdRequest(randomAd)
+	expected := givenExpectedResponse(randomAd)
 
 	actual := service.Execute(request)
 
 	assert.Equal(t, actual, expected)
+	adRepository.AssertCalled(t, "Save", randomAd)
 }
 
 func givenExpectedResponse(ad Ad) CreateAdResponse {
@@ -34,27 +34,15 @@ func givenExpectedResponse(ad Ad) CreateAdResponse {
 }
 
 func stubMocks(adRepository *mocks.Ads, ad Ad, clock *mocks.Clock, idGenerator *mocks.IdGenerator) {
-	adRepository.EXPECT().Save(ad).Return(ad).Times(1)
-	clock.EXPECT().Now().Return(ad.GetCreatedAt()).Times(1)
-	idGenerator.EXPECT().Next().Return(ad.GetId()).Times(1)
+	adRepository.EXPECT().Save(ad).Return(ad)
+	clock.EXPECT().Now().Return(ad.GetCreatedAt())
+	idGenerator.EXPECT().Next().Return(ad.GetId())
 }
 
-func givenAdToCreate() CreateAdRequest {
+func adToCreateAdRequest(ad Ad) CreateAdRequest {
 	return CreateAdRequest{
-		Title:       "Laptop",
-		Description: "New apple laptop",
-		Price:       12,
+		Title:       ad.Title,
+		Description: ad.Description,
+		Price:       ad.Price,
 	}
-}
-
-func givenAd() Ad {
-	id := uuid.New()
-	now := time.Now()
-	return NewAd(
-		id,
-		"Laptop",
-		"New apple laptop",
-		12,
-		now,
-	)
 }

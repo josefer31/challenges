@@ -67,14 +67,10 @@ func (_c *Ads_FindAll_Call) RunAndReturn(run func() []domain.Ad) *Ads_FindAll_Ca
 }
 
 // FindById provides a mock function with given fields: id
-func (_m *Ads) FindById(id uuid.UUID) (*domain.Ad, error) {
+func (_m *Ads) FindById(id uuid.UUID) *domain.Ad {
 	ret := _m.Called(id)
 
 	var r0 *domain.Ad
-	var r1 error
-	if rf, ok := ret.Get(0).(func(uuid.UUID) (*domain.Ad, error)); ok {
-		return rf(id)
-	}
 	if rf, ok := ret.Get(0).(func(uuid.UUID) *domain.Ad); ok {
 		r0 = rf(id)
 	} else {
@@ -83,13 +79,7 @@ func (_m *Ads) FindById(id uuid.UUID) (*domain.Ad, error) {
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(uuid.UUID) error); ok {
-		r1 = rf(id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // Ads_FindById_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindById'
@@ -110,12 +100,12 @@ func (_c *Ads_FindById_Call) Run(run func(id uuid.UUID)) *Ads_FindById_Call {
 	return _c
 }
 
-func (_c *Ads_FindById_Call) Return(_a0 *domain.Ad, _a1 error) *Ads_FindById_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *Ads_FindById_Call) Return(_a0 *domain.Ad) *Ads_FindById_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *Ads_FindById_Call) RunAndReturn(run func(uuid.UUID) (*domain.Ad, error)) *Ads_FindById_Call {
+func (_c *Ads_FindById_Call) RunAndReturn(run func(uuid.UUID) *domain.Ad) *Ads_FindById_Call {
 	_c.Call.Return(run)
 	return _c
 }
