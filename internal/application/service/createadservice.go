@@ -16,16 +16,26 @@ type CreateAdResponse struct {
 }
 
 type CreateAdService struct {
-	AdRepository AdRepository
+	AdRepository Ads
+	IdGenerator  IdGenerator
+	Clock        Clock
 }
 
-func (service CreateAdService) Execute(request CreateAdRequest) CreateAdResponse {
-	ad := CreateAd(request.Title, request.Description, request.Price)
+func (service *CreateAdService) Execute(request CreateAdRequest) CreateAdResponse {
+	ad := NewAd(
+		service.IdGenerator.Next(),
+		request.Title,
+		request.Description,
+		request.Price,
+		service.Clock.Now(),
+	)
+
 	savedAd := service.AdRepository.Save(ad)
+
 	return CreateAdResponse{
 		Id:          savedAd.GetId().String(),
-		Title:       savedAd.GetTitle(),
-		Description: savedAd.GetDescription(),
+		Title:       savedAd.Title,
+		Description: savedAd.Description,
 		CreatedAt:   savedAd.GetCreatedAt().String(),
 	}
 }

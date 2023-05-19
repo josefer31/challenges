@@ -17,7 +17,7 @@ type FindAdResponse struct {
 }
 
 type FindAdService struct {
-	AdRepository AdRepository
+	AdRepository Ads
 }
 
 func (service FindAdService) Execute(request FindAdRequest) (FindAdResponse, error) {
@@ -30,8 +30,8 @@ func (service FindAdService) Execute(request FindAdRequest) (FindAdResponse, err
 
 	return FindAdResponse{
 		Id:          savedAd.GetId().String(),
-		Title:       savedAd.GetTitle(),
-		Description: savedAd.GetDescription(),
+		Title:       savedAd.Title,
+		Description: savedAd.Description,
 		CreatedAt:   savedAd.GetCreatedAt().String(),
 	}, nil
 }

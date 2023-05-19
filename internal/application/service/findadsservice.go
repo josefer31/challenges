@@ -11,7 +11,7 @@ type FindAdsResponse struct {
 }
 
 type FindAdsService struct {
-	AdRepository AdRepository
+	AdRepository Ads
 }
 
 func (service FindAdsService) Execute() FindAdsResponse {
@@ -30,8 +30,8 @@ func createFindAdsResponseFrom(ads []Ad) FindAdsResponse {
 	for _, ad := range ads {
 		adsToResponse = append(adsToResponse, FindAdResponse{
 			Id:          ad.GetId().String(),
-			Title:       ad.GetTitle(),
-			Description: ad.GetDescription(),
+			Title:       ad.Title,
+			Description: ad.Description,
 			CreatedAt:   ad.GetCreatedAt().String(),
 		})
 	}

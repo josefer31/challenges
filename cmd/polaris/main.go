@@ -8,10 +8,12 @@ import (
 )
 
 var (
-	adRepository    = ProvideInMemoryRepository()
-	createAdService = ProvideCreateAdService(adRepository)
-	findAdService   = ProvideFindAdService(adRepository)
-	findAdsService  = ProvideFindAdsService(adRepository)
+	ads             = ProvideInMemoryAds()
+	idGenerator     = ProvideIdGenerator()
+	clock           = ProvideClock()
+	createAdService = ProvideCreateAdService()
+	findAdService   = ProvideFindAdService()
+	findAdsService  = ProvideFindAdsService()
 )
 
 func main() {
@@ -19,7 +21,7 @@ func main() {
 	fmt.Println("Go to save new ad")
 	fmt.Println("--------------------------------")
 
-	createdAd := createAnAd("titulo1", "descripcion 1", 12)
+	createdAd := createAd("titulo1", "descripcion 1", 12)
 	fmt.Printf("Your new Ad %v was created at %v\n", createdAd.Id, createdAd.CreatedAt)
 	fmt.Println("--------------------------------")
 
@@ -31,12 +33,12 @@ func main() {
 	}
 	fmt.Println("--------------------------------")
 
-	createAnAd("titulo2", "descripcion 2", 12)
-	createAnAd("titulo3", "descripcion 3", 12)
-	createAnAd("titulo4", "descripcion 4", 12)
-	createAnAd("titulo5", "descripcion 5", 12)
-	createAnAd("titulo6", "descripcion 6", 12)
-	createAnAd("titulo7", "descripcion 7", 12)
+	createAd("titulo2", "descripcion 2", 12)
+	createAd("titulo3", "descripcion 3", 12)
+	createAd("titulo4", "descripcion 4", 12)
+	createAd("titulo5", "descripcion 5", 12)
+	createAd("titulo6", "descripcion 6", 12)
+	createAd("titulo7", "descripcion 7", 12)
 	foundAdResponse := findAdsService.Execute()
 
 	fmt.Println("--------------------------------")
@@ -44,7 +46,7 @@ func main() {
 
 }
 
-func createAnAd(
+func createAd(
 	title string,
 	description string,
 	price uint,
@@ -59,24 +61,34 @@ func createAnAd(
 	return createdAd
 }
 
-func ProvideCreateAdService(adRepository AdRepository) CreateAdService {
+func ProvideCreateAdService() CreateAdService {
 	return CreateAdService{
-		AdRepository: adRepository,
+		AdRepository: ads,
+		IdGenerator:  idGenerator,
+		Clock:        clock,
 	}
 }
 
-func ProvideFindAdService(adRepository AdRepository) FindAdService {
+func ProvideFindAdService() FindAdService {
 	return FindAdService{
-		AdRepository: adRepository,
+		AdRepository: ads,
 	}
 }
 
-func ProvideFindAdsService(adRepository AdRepository) FindAdsService {
+func ProvideFindAdsService() FindAdsService {
 	return FindAdsService{
-		AdRepository: adRepository,
+		AdRepository: ads,
 	}
 }
 
-func ProvideInMemoryRepository() AdRepository {
-	return &InMemoryAdRepository{}
+func ProvideInMemoryAds() Ads {
+	return &InMemoryAds{}
+}
+
+func ProvideIdGenerator() IdGenerator {
+	return &UUIDGenerator{}
+}
+
+func ProvideClock() Clock {
+	return &ClockImpl{}
 }

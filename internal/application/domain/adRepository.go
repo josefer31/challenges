@@ -4,8 +4,8 @@ import (
 	"github.com/google/uuid"
 )
 
-type AdRepository interface {
+type Ads interface {
 	Save(ad Ad) Ad
-	FindById(id uuid.UUID) (Ad, error)
+	FindById(id uuid.UUID) (*Ad, error)
 	FindAll() []Ad
 }
