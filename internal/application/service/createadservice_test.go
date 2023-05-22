@@ -12,7 +12,7 @@ func TestCreateAd(t *testing.T) {
 	adRepository := new(mocks.Ads)
 	clock := new(mocks.Clock)
 	idGenerator := new(mocks.IdGenerator)
-	service := CreateAdService{adRepository, idGenerator, clock}
+	service := NewCreateAdService(adRepository, idGenerator, clock)
 	randomAd := fixtures.RandomAd()
 	stubMocks(adRepository, randomAd, clock, idGenerator)
 	request := adToCreateAdRequest(randomAd)
@@ -29,6 +29,7 @@ func givenExpectedResponse(ad Ad) CreateAdResponse {
 		Id:          ad.GetId().String(),
 		Title:       ad.Title,
 		Description: ad.Description,
+		Price:       ad.Price,
 		CreatedAt:   ad.GetCreatedAt().String(),
 	}
 }

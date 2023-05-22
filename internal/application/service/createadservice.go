@@ -12,16 +12,21 @@ type CreateAdResponse struct {
 	Id          string
 	Title       string
 	Description string
+	Price       uint
 	CreatedAt   string
 }
 
-type CreateAdService struct {
+type CreateAdService interface {
+	Execute(request CreateAdRequest) CreateAdResponse
+}
+
+type CreateAdServiceImpl struct {
 	AdRepository Ads
 	IdGenerator  IdGenerator
 	Clock        Clock
 }
 
-func (service *CreateAdService) Execute(request CreateAdRequest) CreateAdResponse {
+func (service *CreateAdServiceImpl) Execute(request CreateAdRequest) CreateAdResponse {
 	ad := NewAd(
 		service.IdGenerator.Next(),
 		request.Title,
@@ -36,6 +41,15 @@ func (service *CreateAdService) Execute(request CreateAdRequest) CreateAdRespons
 		Id:          savedAd.GetId().String(),
 		Title:       savedAd.Title,
 		Description: savedAd.Description,
+		Price:       savedAd.Price,
 		CreatedAt:   savedAd.GetCreatedAt().String(),
+	}
+}
+
+func NewCreateAdService(ads Ads, idGenerator IdGenerator, clock Clock) CreateAdService {
+	return &CreateAdServiceImpl{
+		AdRepository: ads,
+		IdGenerator:  idGenerator,
+		Clock:        clock,
 	}
 }

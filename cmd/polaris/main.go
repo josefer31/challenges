@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	. "polaris/internal/application/domain"
 	. "polaris/internal/application/service"
+	"polaris/internal/infrastructure/controller"
 	. "polaris/internal/infrastructure/repository"
 )
 
@@ -14,6 +16,7 @@ var (
 	createAdService = ProvideCreateAdService()
 	findAdService   = ProvideFindAdService()
 	findAdsService  = ProvideFindAdsService()
+	adController    = ProvideAdController()
 )
 
 func main() {
@@ -44,6 +47,20 @@ func main() {
 	fmt.Println("--------------------------------")
 	fmt.Printf("Found Ads  %v\n", foundAdResponse.Ads)
 
+	router := SetupRouter()
+	router.Run(":8080")
+
+}
+
+func SetupRouter() *gin.Engine {
+	router := gin.Default()
+	router.POST("/ads", func(ctx *gin.Context) {
+		createdAd, err := adController.CreateAd(ctx)
+		if err == nil {
+			ctx.JSON(201, createdAd)
+		}
+	})
+	return router
 }
 
 func createAd(
@@ -62,11 +79,7 @@ func createAd(
 }
 
 func ProvideCreateAdService() CreateAdService {
-	return CreateAdService{
-		AdRepository: ads,
-		IdGenerator:  idGenerator,
-		Clock:        clock,
-	}
+	return NewCreateAdService(ads, idGenerator, clock)
 }
 
 func ProvideFindAdService() FindAdService {
@@ -87,4 +100,8 @@ func ProvideIdGenerator() IdGenerator {
 
 func ProvideClock() Clock {
 	return NewClock()
+}
+
+func ProvideAdController() controller.AdController {
+	return controller.NewAdController(createAdService)
 }
