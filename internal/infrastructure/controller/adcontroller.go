@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"polaris/internal/application/service"
 )
 
@@ -23,12 +24,11 @@ type AdController struct {
 	createAdService service.CreateAdService
 }
 
-func (adController AdController) CreateAd(context *gin.Context) (*AdDtoResponse, error) {
-
+func (adController *AdController) HandlerCreationAd(context *gin.Context) {
 	var bodyInput AdDtoInput
 	err := context.BindJSON(&bodyInput)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	createdAdResponse := adController.createAdService.Execute(service.CreateAdRequest{
@@ -36,13 +36,14 @@ func (adController AdController) CreateAd(context *gin.Context) (*AdDtoResponse,
 		Description: bodyInput.Description,
 		Price:       bodyInput.Price,
 	})
-	return &AdDtoResponse{
+
+	context.JSON(http.StatusCreated, AdDtoResponse{
 		Id:          createdAdResponse.Id,
 		Title:       createdAdResponse.Title,
 		Description: createdAdResponse.Description,
 		Price:       createdAdResponse.Price,
 		CreatedAt:   createdAdResponse.CreatedAt,
-	}, nil
+	})
 }
 
 func NewAdController(createAdService service.CreateAdService) AdController {

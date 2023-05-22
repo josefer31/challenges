@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
+	"polaris/pkg/server"
 	"testing"
 )
 
@@ -20,7 +21,7 @@ func TestCreateAd(t *testing.T) {
 	givenPrice := uint(rand.Uint32())
 	bodyRequest := givenBodyRequest(givenTitle, givenDescription, givenPrice)
 
-	router := SetupRouter()
+	router := server.SetupRouter()
 	request, _ := http.NewRequest("POST", "/ads", bytes.NewBuffer(bodyRequest))
 	router.ServeHTTP(recorder, request)
 
