@@ -53,6 +53,7 @@ func givenExpectedAdResponse(ad domain.Ad) FindAdResponse {
 		Id:          ad.GetId().String(),
 		Title:       ad.Title,
 		Description: ad.Description,
+		Price:       ad.Price,
 		CreatedAt:   ad.GetCreatedAt().String(),
 	}
 }

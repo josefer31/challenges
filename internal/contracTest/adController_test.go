@@ -22,10 +22,14 @@ import (
 var bigDescription = fake.CharactersN(service.DescriptionMaxLength)
 var title = fake.Title()
 var price = uint(rand.Uint32())
+var createAdServiceMock = new(mocks.CreateAdService)
+var findAdServiceMock = new(mocks.FindAdService)
 
-func TestReturnInvalidResponseWhenMissSomeRequiredField(t *testing.T) {
-	createAdServiceMock := mocks.NewCreateAdService(t)
-	adController := controller.NewAdController(createAdServiceMock)
+const adIdToFind = "e85d27d4-3a6d-410f-a334-fdb52452fc17"
+
+func TestReturn400WhenMissSomeRequiredField(t *testing.T) {
+
+	adController := controller.NewAdController(createAdServiceMock, findAdServiceMock)
 	newRecorder := httptest.NewRecorder()
 	ginContext := getTestGinContext(newRecorder)
 	mockNotValidJsonRequest(ginContext)
@@ -36,9 +40,8 @@ func TestReturnInvalidResponseWhenMissSomeRequiredField(t *testing.T) {
 	createAdServiceMock.AssertNotCalled(t, "Execute")
 }
 
-func TestReturnInvalidResponseWhenDescriptionIsGreaterThanFifty(t *testing.T) {
-	createAdServiceMock := mocks.NewCreateAdService(t)
-	adController := controller.NewAdController(createAdServiceMock)
+func TestReturn400WhenDescriptionIsGreaterThanFifty(t *testing.T) {
+	adController := controller.NewAdController(createAdServiceMock, findAdServiceMock)
 	newRecorder := httptest.NewRecorder()
 	ginContext := getTestGinContext(newRecorder)
 	mockBigDescriptionRequest(ginContext)
@@ -55,6 +58,20 @@ func TestReturnInvalidResponseWhenDescriptionIsGreaterThanFifty(t *testing.T) {
 		Description: bigDescription,
 		Price:       price,
 	})
+}
+
+func TestReturn404WhenFindNotExistingAd(t *testing.T) {
+	adController := controller.NewAdController(createAdServiceMock, findAdServiceMock)
+	newRecorder := httptest.NewRecorder()
+	ginContext := getTestGinContext(newRecorder)
+	findAdServiceMock.EXPECT().Execute(mock.Anything).Return(nil)
+	mockFindAdRequest(ginContext)
+
+	adController.HandlerFindAd(ginContext)
+
+	assert.Equal(t, 404, newRecorder.Code)
+	findAdServiceMock.AssertCalled(t, "Execute", service.FindAdRequest{Id: adIdToFind})
+
 }
 
 func mockNotValidJsonRequest(c *gin.Context) {
@@ -88,6 +105,13 @@ func mockBigDescriptionRequest(c *gin.Context) {
 	}
 
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonbytes))
+}
+
+func mockFindAdRequest(c *gin.Context) {
+	c.Request.Method = "GET"
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.AddParam("adId", adIdToFind)
+
 }
 
 func getTestGinContext(w *httptest.ResponseRecorder) *gin.Context {

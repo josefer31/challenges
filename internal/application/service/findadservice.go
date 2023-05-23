@@ -13,31 +13,37 @@ type FindAdResponse struct {
 	Id          string
 	Title       string
 	Description string
+	Price       uint
 	CreatedAt   string
 }
-
-type FindAdService struct {
+type FindAdService interface {
+	Execute(request FindAdRequest) *FindAdResponse
+}
+type FindAdServiceImpl struct {
 	adRepository Ads
 }
 
-func (service *FindAdService) Execute(request FindAdRequest) *FindAdResponse {
+func (service *FindAdServiceImpl) Execute(request FindAdRequest) *FindAdResponse {
 	id, errorParsing := uuid.Parse(request.Id)
 	if errorParsing != nil {
 		return nil
 	}
-	savedAd := service.adRepository.FindById(id)
-	if savedAd == nil {
+
+	foundAd := service.adRepository.FindById(id)
+	if foundAd == nil {
 		return nil
 	}
+
 	return &FindAdResponse{
-		Id:          savedAd.GetId().String(),
-		Title:       savedAd.Title,
-		Description: savedAd.Description,
-		CreatedAt:   savedAd.GetCreatedAt().String(),
+		Id:          foundAd.GetId().String(),
+		Title:       foundAd.Title,
+		Description: foundAd.Description,
+		Price:       foundAd.Price,
+		CreatedAt:   foundAd.GetCreatedAt().String(),
 	}
 
 }
 
 func NewFindAdService(ads Ads) FindAdService {
-	return FindAdService{ads}
+	return &FindAdServiceImpl{ads}
 }

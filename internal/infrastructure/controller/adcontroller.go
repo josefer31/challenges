@@ -23,6 +23,7 @@ type AdDtoResponse struct {
 
 type AdController struct {
 	createAdService service.CreateAdService
+	findAdService   service.FindAdService
 }
 
 func (adController *AdController) HandlerCreationAd(context *gin.Context) {
@@ -51,6 +52,22 @@ func (adController *AdController) HandlerCreationAd(context *gin.Context) {
 	})
 }
 
+func (adController *AdController) HandlerFindAd(context *gin.Context) {
+	adId := context.Param("adId")
+	if foundAd := adController.findAdService.Execute(service.FindAdRequest{Id: adId}); foundAd == nil {
+		context.JSON(http.StatusNotFound, http.NoBody)
+	} else {
+
+		context.JSON(http.StatusOK, AdDtoResponse{
+			Id:          foundAd.Id,
+			Title:       foundAd.Title,
+			Description: foundAd.Description,
+			Price:       foundAd.Price,
+			CreatedAt:   foundAd.CreatedAt,
+		})
+	}
+}
+
 func getCreateAdRequestFor(bodyInput AdDtoInput) service.CreateAdRequest {
 	return service.CreateAdRequest{
 		Title:       bodyInput.Title,
@@ -59,6 +76,9 @@ func getCreateAdRequestFor(bodyInput AdDtoInput) service.CreateAdRequest {
 	}
 }
 
-func NewAdController(createAdService service.CreateAdService) AdController {
-	return AdController{createAdService}
+func NewAdController(
+	createAdService service.CreateAdService,
+	findAdService service.FindAdService,
+) AdController {
+	return AdController{createAdService, findAdService}
 }

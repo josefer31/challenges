@@ -13,19 +13,13 @@ var idGenerator = domain.NewUUIDGenerator()
 var createAdService = service.NewCreateAdService(ads, idGenerator, clock)
 var findAdService = service.NewFindAdService(ads)
 var findAdsService = service.NewFindAdsService(ads)
-var adController = controller.NewAdController(createAdService)
+var adController = controller.NewAdController(createAdService, findAdService)
 
-func ProvideAdController() controller.AdController {
-	return adController
-}
+func ProvideAdController() controller.AdController { return adController }
 
-func ProvideCreateAdService() service.CreateAdService {
-	return createAdService
-}
-func ProvideFindAdService() service.FindAdService {
-	return findAdService
-}
+func ProvideCreateAdService() service.CreateAdService { return createAdService }
+func ProvideFindAdService() service.FindAdService     { return findAdService }
 
-func ProvideFindAdsService() service.FindAdsService {
-	return findAdsService
-}
+func ProvideFindAdsService() service.FindAdsService { return findAdsService }
+
+func ProvideAds() domain.Ads { return ads }
