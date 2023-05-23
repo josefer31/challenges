@@ -43,13 +43,13 @@ func main() {
 
 }
 
-func createAd(service CreateAdService, title string, description string, price uint) CreateAdResponse {
+func createAd(service CreateAdService, title string, description string, price uint) *CreateAdResponse {
 	request := CreateAdRequest{
 		Title:       title,
 		Description: description,
 		Price:       price,
 	}
 
-	createdAd := service.Execute(request)
+	createdAd, _ := service.Execute(request)
 	return createdAd
 }

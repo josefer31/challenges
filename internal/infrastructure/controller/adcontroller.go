@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"polaris/internal/application/service"
 )
@@ -27,15 +28,19 @@ type AdController struct {
 func (adController *AdController) HandlerCreationAd(context *gin.Context) {
 	var bodyInput AdDtoInput
 
-	if errorBinding := context.BindJSON(&bodyInput); errorBinding != nil {
+	if err := context.BindJSON(&bodyInput); err != nil {
+		log.Printf("Error parsing input to JSON : %v", err.Error())
 		return
 	}
 
-	createdAdResponse := adController.createAdService.Execute(service.CreateAdRequest{
-		Title:       bodyInput.Title,
-		Description: bodyInput.Description,
-		Price:       bodyInput.Price,
-	})
+	createAdRequest := getCreateAdRequestFor(bodyInput)
+	createdAdResponse, err := adController.createAdService.Execute(createAdRequest)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, err)
+		log.Printf("Error creating ad : %v", err.Error())
+		return
+	}
 
 	context.JSON(http.StatusCreated, AdDtoResponse{
 		Id:          createdAdResponse.Id,
@@ -44,6 +49,14 @@ func (adController *AdController) HandlerCreationAd(context *gin.Context) {
 		Price:       createdAdResponse.Price,
 		CreatedAt:   createdAdResponse.CreatedAt,
 	})
+}
+
+func getCreateAdRequestFor(bodyInput AdDtoInput) service.CreateAdRequest {
+	return service.CreateAdRequest{
+		Title:       bodyInput.Title,
+		Description: bodyInput.Description,
+		Price:       bodyInput.Price,
+	}
 }
 
 func NewAdController(createAdService service.CreateAdService) AdController {

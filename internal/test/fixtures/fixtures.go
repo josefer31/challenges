@@ -17,3 +17,13 @@ func RandomAd() domain.Ad {
 		time.Now(),
 	)
 }
+
+func RandomAdWithWrongDescriptionLen() domain.Ad {
+	return domain.NewAd(
+		uuid.New(),
+		fake.Title(),
+		fake.CharactersN(60),
+		uint(rand.Uint32()),
+		time.Now(),
+	)
+}
