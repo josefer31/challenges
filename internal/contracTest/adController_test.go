@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-func TestCreateAdController(t *testing.T) {
+func TestReturnInvalidResponseWhenMissSomeRequiredField(t *testing.T) {
 	createAdServiceMock := mocks.NewCreateAdService(t)
 	adController := controller.NewAdController(createAdServiceMock)
 	newRecorder := httptest.NewRecorder()
@@ -25,12 +25,13 @@ func TestCreateAdController(t *testing.T) {
 	adController.HandlerCreationAd(ginContext)
 
 	assert.Equal(t, 400, newRecorder.Code)
+	createAdServiceMock.AssertNotCalled(t, "Execute")
 }
 
 func mockNotValidJsonRequest(c *gin.Context) {
 	c.Request.Method = "POST"
 	c.Request.Header.Set("Content-Type", "application/json")
-	jsonbytes, err := json.Marshal(`{"missingAttributes":"any"}`)
+	jsonbytes, err := json.Marshal(`{"title":"any","description":"12","missingPriceField":"any"}`)
 	if err != nil {
 		panic(err)
 	}

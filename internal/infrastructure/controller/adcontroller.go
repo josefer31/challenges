@@ -7,9 +7,9 @@ import (
 )
 
 type AdDtoInput struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Price       uint   `json:"price"`
+	Title       string `json:"title" binding:"required"`
+	Description string `json:"description" binding:"required"`
+	Price       uint   `json:"price" binding:"required"`
 }
 
 type AdDtoResponse struct {
@@ -26,8 +26,8 @@ type AdController struct {
 
 func (adController *AdController) HandlerCreationAd(context *gin.Context) {
 	var bodyInput AdDtoInput
-	err := context.BindJSON(&bodyInput)
-	if err != nil {
+
+	if errorBinding := context.BindJSON(&bodyInput); errorBinding != nil {
 		return
 	}
 
