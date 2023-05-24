@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"polaris/internal/application/domain"
 	"polaris/internal/application/service"
 )
 
@@ -54,10 +55,10 @@ func (adController *AdController) HandlerCreationAd(context *gin.Context) {
 
 func (adController *AdController) HandlerFindAd(context *gin.Context) {
 	adId := context.Param("adId")
-	if foundAd := adController.findAdService.Execute(service.FindAdRequest{Id: adId}); foundAd == nil {
-		context.JSON(http.StatusNotFound, http.NoBody)
+	if foundAd, err := adController.findAdService.Execute(service.FindAdRequest{Id: adId}); err != nil {
+		handleError(context, err)
+		return
 	} else {
-
 		context.JSON(http.StatusOK, AdDtoResponse{
 			Id:          foundAd.Id,
 			Title:       foundAd.Title,
@@ -65,6 +66,14 @@ func (adController *AdController) HandlerFindAd(context *gin.Context) {
 			Price:       foundAd.Price,
 			CreatedAt:   foundAd.CreatedAt,
 		})
+	}
+}
+
+func handleError(context *gin.Context, err error) {
+	if _, ok := err.(domain.AdNotFoundError); ok {
+		context.JSON(http.StatusNotFound, http.NoBody)
+	} else {
+		context.JSON(http.StatusInternalServerError, http.NoBody)
 	}
 }
 

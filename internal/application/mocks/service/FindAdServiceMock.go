@@ -22,10 +22,14 @@ func (_m *FindAdService) EXPECT() *FindAdService_Expecter {
 }
 
 // Execute provides a mock function with given fields: request
-func (_m *FindAdService) Execute(request service.FindAdRequest) *service.FindAdResponse {
+func (_m *FindAdService) Execute(request service.FindAdRequest) (*service.FindAdResponse, error) {
 	ret := _m.Called(request)
 
 	var r0 *service.FindAdResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(service.FindAdRequest) (*service.FindAdResponse, error)); ok {
+		return rf(request)
+	}
 	if rf, ok := ret.Get(0).(func(service.FindAdRequest) *service.FindAdResponse); ok {
 		r0 = rf(request)
 	} else {
@@ -34,7 +38,13 @@ func (_m *FindAdService) Execute(request service.FindAdRequest) *service.FindAdR
 		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(service.FindAdRequest) error); ok {
+		r1 = rf(request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // FindAdService_Execute_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Execute'
@@ -55,12 +65,12 @@ func (_c *FindAdService_Execute_Call) Run(run func(request service.FindAdRequest
 	return _c
 }
 
-func (_c *FindAdService_Execute_Call) Return(_a0 *service.FindAdResponse) *FindAdService_Execute_Call {
-	_c.Call.Return(_a0)
+func (_c *FindAdService_Execute_Call) Return(_a0 *service.FindAdResponse, _a1 error) *FindAdService_Execute_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *FindAdService_Execute_Call) RunAndReturn(run func(service.FindAdRequest) *service.FindAdResponse) *FindAdService_Execute_Call {
+func (_c *FindAdService_Execute_Call) RunAndReturn(run func(service.FindAdRequest) (*service.FindAdResponse, error)) *FindAdService_Execute_Call {
 	_c.Call.Return(run)
 	return _c
 }

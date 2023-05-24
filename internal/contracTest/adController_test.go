@@ -3,7 +3,9 @@ package contract_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/icrowley/fake"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -12,6 +14,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"polaris/internal/application/domain"
 	mocks "polaris/internal/application/mocks/service"
 	"polaris/internal/application/service"
 	"polaris/internal/application/service/errorService"
@@ -64,12 +67,29 @@ func TestReturn404WhenFindNotExistingAd(t *testing.T) {
 	adController := controller.NewAdController(createAdServiceMock, findAdServiceMock)
 	newRecorder := httptest.NewRecorder()
 	ginContext := getTestGinContext(newRecorder)
-	findAdServiceMock.EXPECT().Execute(mock.Anything).Return(nil)
+	id, _ := uuid.Parse(adIdToFind)
+	called := findAdServiceMock.EXPECT().Execute(mock.Anything).Return(nil, domain.NewAdNotFoundError(id))
+	defer called.Unset()
 	mockFindAdRequest(ginContext)
 
 	adController.HandlerFindAd(ginContext)
 
 	assert.Equal(t, 404, newRecorder.Code)
+	findAdServiceMock.AssertCalled(t, "Execute", service.FindAdRequest{Id: adIdToFind})
+
+}
+
+func TestReturn500WhenFailsFindingAd(t *testing.T) {
+	adController := controller.NewAdController(createAdServiceMock, findAdServiceMock)
+	newRecorder := httptest.NewRecorder()
+	ginContext := getTestGinContext(newRecorder)
+	expect := findAdServiceMock.EXPECT().Execute(mock.Anything).Return(nil, errors.New("unexpected error"))
+	defer expect.Unset()
+	mockFindAdRequest(ginContext)
+
+	adController.HandlerFindAd(ginContext)
+
+	assert.Equal(t, 500, newRecorder.Code)
 	findAdServiceMock.AssertCalled(t, "Execute", service.FindAdRequest{Id: adIdToFind})
 
 }

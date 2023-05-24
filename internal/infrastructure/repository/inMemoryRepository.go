@@ -16,13 +16,13 @@ var ads = make([]Ad, 0)
 func (receiver *InMemoryAds) FindAll() []Ad {
 	return ads
 }
-func (receiver *InMemoryAds) FindById(id uuid.UUID) *Ad {
+func (receiver *InMemoryAds) FindById(id uuid.UUID) (*Ad, error) {
 	for _, ad := range ads {
 		if ad.GetId() == id {
-			return &ad
+			return &ad, nil
 		}
 	}
-	return nil
+	return nil, NewAdNotFoundError(id)
 }
 
 func (receiver *InMemoryAds) Save(ad Ad) Ad {

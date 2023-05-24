@@ -19,8 +19,8 @@ func main() {
 	fmt.Printf("Your new Ad %v was created at %v\n", createdAd.Id, createdAd.CreatedAt)
 	fmt.Println("--------------------------------")
 
-	foundAd := findAdService.Execute(FindAdRequest{Id: createdAd.Id})
-	if foundAd == nil {
+	foundAd, err := findAdService.Execute(FindAdRequest{Id: createdAd.Id})
+	if err != nil {
 		fmt.Printf("Error, Ad %v not found\n", createdAd.Id)
 	} else {
 		fmt.Printf("Found Ad  %v\n", foundAd)

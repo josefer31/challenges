@@ -6,6 +6,6 @@ import (
 
 type Ads interface {
 	Save(ad Ad) Ad
-	FindById(id uuid.UUID) *Ad
+	FindById(id uuid.UUID) (*Ad, error)
 	FindAll() []Ad
 }
