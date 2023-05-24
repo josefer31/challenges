@@ -12,23 +12,42 @@ func TestCreateAd(t *testing.T) {
 	adRepository := new(mocks.Ads)
 	clock := new(mocks.Clock)
 	idGenerator := new(mocks.IdGenerator)
-	service := CreateAdService{adRepository, idGenerator, clock}
+	service := NewCreateAdService(adRepository, idGenerator, clock)
 	randomAd := fixtures.RandomAd()
 	stubMocks(adRepository, randomAd, clock, idGenerator)
 	request := adToCreateAdRequest(randomAd)
 	expected := givenExpectedResponse(randomAd)
 
-	actual := service.Execute(request)
+	actual, _ := service.Execute(request)
 
 	assert.Equal(t, actual, expected)
 	adRepository.AssertCalled(t, "Save", randomAd)
 }
 
-func givenExpectedResponse(ad Ad) CreateAdResponse {
-	return CreateAdResponse{
+func TestReturnErrorWhenDescriptionGreaterThanFifty(t *testing.T) {
+	adRepository := new(mocks.Ads)
+	clock := new(mocks.Clock)
+	idGenerator := new(mocks.IdGenerator)
+	service := NewCreateAdService(adRepository, idGenerator, clock)
+	randomAd := fixtures.RandomAdWithWrongDescriptionLen()
+	stubMocks(adRepository, randomAd, clock, idGenerator)
+	request := adToCreateAdRequest(randomAd)
+
+	_, err := service.Execute(request)
+	t.Run("Description greater than fifty must give an error", func(t *testing.T) {
+		assert.Error(t, err)
+		adRepository.AssertNotCalled(t, "Save", randomAd)
+
+	})
+
+}
+
+func givenExpectedResponse(ad Ad) *CreateAdResponse {
+	return &CreateAdResponse{
 		Id:          ad.GetId().String(),
 		Title:       ad.Title,
 		Description: ad.Description,
+		Price:       ad.Price,
 		CreatedAt:   ad.GetCreatedAt().String(),
 	}
 }
