@@ -14,9 +14,9 @@ func TestFindExistingAd(t *testing.T) {
 	ads := new(mocks.Ads)
 	ad := fixtures.RandomAd()
 	findAdService := NewFindAdService(ads)
-	ads.EXPECT().FindById(mock.Anything).Return(&ad, nil)
+	ads.EXPECT().FindById(mock.Anything).Return(ad, nil)
 
-	expectedAdResponse := givenExpectedAdResponse(ad)
+	expectedAdResponse := givenExpectedAdResponse(*ad)
 	actualResponse, _ := findAdService.Execute(FindAdRequest{ad.GetId().String()})
 
 	assert.Equal(t, *actualResponse, expectedAdResponse)

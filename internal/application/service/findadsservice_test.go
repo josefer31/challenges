@@ -87,7 +87,7 @@ func expectedAdsResponseFor(ads []domain.Ad) FindAdsResponse {
 func givenRandomAds(totalAds int) []domain.Ad {
 	listOfAds := make([]domain.Ad, totalAds)
 	for index := 0; index < totalAds; index++ {
-		listOfAds[index] = fixtures.RandomAd()
+		listOfAds[index] = *fixtures.RandomAd()
 	}
 	return listOfAds
 }

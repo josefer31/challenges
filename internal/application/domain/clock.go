@@ -1,6 +1,8 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 type Clock interface {
 	Now() time.Time
@@ -9,7 +11,8 @@ type Clock interface {
 type ClockImpl struct{}
 
 func (receiver ClockImpl) Now() time.Time {
-	return time.Now()
+
+	return time.Now().UTC()
 }
 
 func NewClock() Clock { return ClockImpl{} }

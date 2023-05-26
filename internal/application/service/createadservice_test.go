@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/stretchr/testify/assert"
-	. "polaris/internal/application/domain"
+	"polaris/internal/application/domain"
 	"polaris/internal/application/mocks"
 	"polaris/internal/test/fixtures"
 	"testing"
@@ -42,7 +42,7 @@ func TestReturnErrorWhenDescriptionGreaterThanFifty(t *testing.T) {
 
 }
 
-func givenExpectedResponse(ad Ad) *CreateAdResponse {
+func givenExpectedResponse(ad *domain.Ad) *CreateAdResponse {
 	return &CreateAdResponse{
 		Id:          ad.GetId().String(),
 		Title:       ad.Title,
@@ -52,13 +52,13 @@ func givenExpectedResponse(ad Ad) *CreateAdResponse {
 	}
 }
 
-func stubMocks(adRepository *mocks.Ads, ad Ad, clock *mocks.Clock, idGenerator *mocks.IdGenerator) {
-	adRepository.EXPECT().Save(ad).Return(ad)
+func stubMocks(adRepository *mocks.Ads, ad *domain.Ad, clock *mocks.Clock, idGenerator *mocks.IdGenerator) {
+	adRepository.EXPECT().Save(ad).Return(ad, nil)
 	clock.EXPECT().Now().Return(ad.GetCreatedAt())
 	idGenerator.EXPECT().Next().Return(ad.GetId())
 }
 
-func adToCreateAdRequest(ad Ad) CreateAdRequest {
+func adToCreateAdRequest(ad *domain.Ad) CreateAdRequest {
 	return CreateAdRequest{
 		Title:       ad.Title,
 		Description: ad.Description,

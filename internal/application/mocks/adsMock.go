@@ -121,17 +121,29 @@ func (_c *Ads_FindById_Call) RunAndReturn(run func(uuid.UUID) (*domain.Ad, error
 }
 
 // Save provides a mock function with given fields: ad
-func (_m *Ads) Save(ad domain.Ad) domain.Ad {
+func (_m *Ads) Save(ad *domain.Ad) (*domain.Ad, error) {
 	ret := _m.Called(ad)
 
-	var r0 domain.Ad
-	if rf, ok := ret.Get(0).(func(domain.Ad) domain.Ad); ok {
+	var r0 *domain.Ad
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*domain.Ad) (*domain.Ad, error)); ok {
+		return rf(ad)
+	}
+	if rf, ok := ret.Get(0).(func(*domain.Ad) *domain.Ad); ok {
 		r0 = rf(ad)
 	} else {
-		r0 = ret.Get(0).(domain.Ad)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Ad)
+		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(*domain.Ad) error); ok {
+		r1 = rf(ad)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Ads_Save_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Save'
@@ -140,24 +152,24 @@ type Ads_Save_Call struct {
 }
 
 // Save is a helper method to define mock.On call
-//   - ad domain.Ad
+//   - ad *domain.Ad
 func (_e *Ads_Expecter) Save(ad interface{}) *Ads_Save_Call {
 	return &Ads_Save_Call{Call: _e.mock.On("Save", ad)}
 }
 
-func (_c *Ads_Save_Call) Run(run func(ad domain.Ad)) *Ads_Save_Call {
+func (_c *Ads_Save_Call) Run(run func(ad *domain.Ad)) *Ads_Save_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(domain.Ad))
+		run(args[0].(*domain.Ad))
 	})
 	return _c
 }
 
-func (_c *Ads_Save_Call) Return(_a0 domain.Ad) *Ads_Save_Call {
-	_c.Call.Return(_a0)
+func (_c *Ads_Save_Call) Return(_a0 *domain.Ad, _a1 error) *Ads_Save_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *Ads_Save_Call) RunAndReturn(run func(domain.Ad) domain.Ad) *Ads_Save_Call {
+func (_c *Ads_Save_Call) RunAndReturn(run func(*domain.Ad) (*domain.Ad, error)) *Ads_Save_Call {
 	_c.Call.Return(run)
 	return _c
 }

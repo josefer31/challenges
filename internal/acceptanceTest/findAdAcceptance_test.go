@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/kinbiko/jsonassert"
 	"github.com/stretchr/testify/assert"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -23,10 +24,16 @@ const priceInDb = 12
 func TestMain(m *testing.M) {
 	ads := boostrap.ProvideAds()
 	id, _ := uuid.Parse(idInDB)
-	ads.Save(domain.NewAd(id, titleInDb, descriptionInDb, priceInDb, time.Now()))
+	_, err := ads.Save(domain.NewAd(id, titleInDb, descriptionInDb, priceInDb, time.Now()))
+	if err != nil {
+		log.Printf("Error trying to creating an ad - %v", err)
+		return
+	}
 	exitVal := m.Run()
-	os.Exit(exitVal)
+	defer func() { os.Exit(exitVal) }()
+	defer boostrap.CloseDbClient()
 }
+
 func TestFindAd(t *testing.T) {
 	jsonAsserter := jsonassert.New(t)
 	recorder := httptest.NewRecorder()

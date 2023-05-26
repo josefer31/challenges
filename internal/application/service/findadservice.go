@@ -26,7 +26,7 @@ type FindAdServiceImpl struct {
 func (service *FindAdServiceImpl) Execute(request FindAdRequest) (*FindAdResponse, error) {
 	id, errorParsing := uuid.Parse(request.Id)
 	if errorParsing != nil {
-		return nil, errorParsing
+		return nil, InvalidUuid{}
 	}
 
 	if foundAd, err := service.adRepository.FindById(id); err != nil {

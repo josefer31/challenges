@@ -36,7 +36,8 @@ func (service *CreateAdServiceImpl) Execute(request CreateAdRequest) (*CreateAdR
 		return nil, errorService.NewDescriptionLenError(request.Description)
 	}
 
-	ad := NewAd(
+	var ad *Ad
+	ad = NewAd(
 		service.IdGenerator.Next(),
 		request.Title,
 		request.Description,
@@ -44,15 +45,18 @@ func (service *CreateAdServiceImpl) Execute(request CreateAdRequest) (*CreateAdR
 		service.Clock.Now(),
 	)
 
-	savedAd := service.AdRepository.Save(ad)
+	if savedAd, err := service.AdRepository.Save(ad); err != nil {
+		return nil, err
+	} else {
+		return &CreateAdResponse{
+			Id:          savedAd.GetId().String(),
+			Title:       savedAd.Title,
+			Description: savedAd.Description,
+			Price:       savedAd.Price,
+			CreatedAt:   savedAd.GetCreatedAt().String(),
+		}, nil
+	}
 
-	return &CreateAdResponse{
-		Id:          savedAd.GetId().String(),
-		Title:       savedAd.Title,
-		Description: savedAd.Description,
-		Price:       savedAd.Price,
-		CreatedAt:   savedAd.GetCreatedAt().String(),
-	}, nil
 }
 
 func NewCreateAdService(ads Ads, idGenerator IdGenerator, clock Clock) CreateAdService {
