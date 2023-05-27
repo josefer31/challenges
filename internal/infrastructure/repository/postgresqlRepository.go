@@ -58,8 +58,21 @@ func (p *PostgresqlRepository) FindById(id uuid.UUID) (*domain.Ad, error) {
 }
 
 func (p *PostgresqlRepository) FindAll() []domain.Ad {
-	//TODO implement me
-	panic("implement me")
+	var adsInDb []Ad
+	p.dbClient.Find(&adsInDb)
+	domainAds := make([]domain.Ad, len(adsInDb))
+
+	for index, adInDb := range adsInDb {
+		id, _ := uuid.Parse(adInDb.Id)
+		domainAds[index] = *domain.NewAd(
+			id,
+			adInDb.Title,
+			adInDb.Description,
+			adInDb.Price,
+			adInDb.CreatedAt.UTC(),
+		)
+	}
+	return domainAds
 }
 
 func NewPostgresAds(dbClient *gorm.DB) domain.Ads { return &PostgresqlRepository{dbClient: dbClient} }
