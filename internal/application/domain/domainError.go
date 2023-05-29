@@ -16,3 +16,9 @@ func (adNotFoundError AdNotFoundError) Error() string {
 func NewAdNotFoundError(id uuid.UUID) AdNotFoundError {
 	return AdNotFoundError{id}
 }
+
+type InvalidUuid struct{}
+
+func (invalidUuid InvalidUuid) Error() string {
+	return fmt.Sprint("Invalid Id")
+}

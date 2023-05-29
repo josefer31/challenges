@@ -5,7 +5,7 @@ import (
 )
 
 type Ads interface {
-	Save(ad Ad) Ad
+	Save(ad *Ad) (*Ad, error)
 	FindById(id uuid.UUID) (*Ad, error)
 	FindAll() []Ad
 }

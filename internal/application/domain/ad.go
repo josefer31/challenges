@@ -21,8 +21,8 @@ func (ad *Ad) GetId() uuid.UUID {
 	return ad.id
 }
 
-func NewAd(id uuid.UUID, title string, description string, price uint, createdAt time.Time) Ad {
-	return Ad{
+func NewAd(id uuid.UUID, title string, description string, price uint, createdAt time.Time) *Ad {
+	return &Ad{
 		id,
 		title,
 		description,

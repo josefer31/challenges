@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error, Ad %v not found\n", createdAd.Id)
 	} else {
-		fmt.Printf("Found Ad  %v\n", foundAd)
+		fmt.Printf("Found Ad  %v\n", *foundAd)
 	}
 	fmt.Println("--------------------------------")
 

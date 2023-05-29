@@ -72,7 +72,10 @@ func (adController *AdController) HandlerFindAd(context *gin.Context) {
 func handleError(context *gin.Context, err error) {
 	if _, ok := err.(domain.AdNotFoundError); ok {
 		context.JSON(http.StatusNotFound, http.NoBody)
+	} else if _, ok := err.(domain.InvalidUuid); ok {
+		context.JSON(http.StatusNotFound, http.NoBody)
 	} else {
+		log.Printf("Server error - %v \n", err)
 		context.JSON(http.StatusInternalServerError, http.NoBody)
 	}
 }
